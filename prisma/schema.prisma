@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./db.db"
+}
+
+model Visitors {
+  id        Int    @id @default(autoincrement())
+  recency   String
+  frequency Int
+  monetary  Int
+}
+
+model VisitorsStats {
+  id            Int    @id @default(autoincrement())
+  recency       String
+  frequency     Int
+  monetary      Int
+  recencyRank   Int
+  frequencyRank Int
+  monetaryRank  Int
+}
