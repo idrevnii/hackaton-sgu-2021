@@ -1,15 +1,23 @@
 import { PrismaClient } from '@prisma/client'
-import { isVisitorsTableFull } from './checker'
-import { fillVisitorsStatsTable, fillVisitorsTable } from './filler'
+import { isTableFull } from './checker'
+import {
+  fillRawVisitorsTable,
+  fillVisitorsStatsTable,
+  fillVisitorsTable
+} from './filler'
 
 export const prisma = new PrismaClient()
 
 async function main() {
-  const isTableFull = await isVisitorsTableFull()
-  if (!isTableFull) {
+  if (!(await isTableFull(prisma.rawVisitors))) {
+    await fillRawVisitorsTable()
+  }
+  if (!(await isTableFull(prisma.visitors))) {
     await fillVisitorsTable()
   }
-  await fillVisitorsStatsTable()
+  if (!(await isTableFull(prisma.visitorsStats))) {
+    await fillVisitorsStatsTable()
+  }
   console.log('Ended!')
 }
 

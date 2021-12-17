@@ -1,4 +1,9 @@
+import moment from 'moment'
 import { Visitor } from './models'
+
+export function parseDate(date: string): number {
+  return moment(date).dayOfYear()
+}
 
 export function rankRecency(recency: number): number {
   if (recency >= 0 && recency <= 13) {

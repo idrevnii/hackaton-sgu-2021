@@ -7,6 +7,13 @@ datasource db {
   url      = "file:./db.db"
 }
 
+model rawVisitors {
+  id        Int    @id @default(autoincrement())
+  visitorId Int
+  recency   String
+  monetary  Int
+}
+
 model Visitors {
   id        Int    @id @default(autoincrement())
   recency   String
