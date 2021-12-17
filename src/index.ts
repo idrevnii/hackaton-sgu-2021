@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { isTableFull } from './checker'
 import {
   fillRawVisitorsTable,
+  fillVisitorRanksTable,
   fillVisitorsStatsTable,
   fillVisitorsTable
 } from './filler'
@@ -18,6 +19,10 @@ async function main() {
   if (!(await isTableFull(prisma.visitorsStats))) {
     await fillVisitorsStatsTable()
   }
+  if (!(await isTableFull(prisma.visitorRanks))) {
+    await fillVisitorRanksTable()
+  }
+
   console.log('Ended!')
 }
 

@@ -25,18 +25,6 @@ export function generateFrequency(
   return random.int(start, end)
 }
 
-// export function generateMonetary(
-//   frequency: number,
-//   start = MONETARY_START,
-//   end = MONETARY_END
-// ): number {
-//   const arr = []
-//   for (let i = 0; i != frequency; i += 1) {
-//     arr.push(random.int(start, end))
-//   }
-//   return arr.reduce((acc, el) => acc + el, 0)
-// }
-
 export function generateMonetary(
   start = MONETARY_START,
   end = MONETARY_END

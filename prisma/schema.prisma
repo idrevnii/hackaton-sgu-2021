@@ -30,3 +30,11 @@ model VisitorsStats {
   frequencyRank Int
   monetaryRank  Int
 }
+
+model VisitorRanks {
+  id            Int    @id
+  recencyRank   Int
+  frequencyRank Int
+  monetaryRank  Int
+  rank          String
+}

@@ -9,7 +9,8 @@ import {
   rankFrequency,
   rankRecency,
   calculateMonetaryPercent,
-  parseDate
+  parseDate,
+  rankVisitor
 } from './parser'
 
 export async function fillRawVisitorsTable(): Promise<void> {
@@ -69,7 +70,7 @@ export async function fillVisitorsStatsTable(): Promise<void> {
   const visitors = await prisma.visitors.findMany()
   const visitorsMonetary = calculateMonetaryPercent(visitors)
   for (const visitor of visitorsMonetary) {
-    const recencyRank = rankRecency(parseDate(visitor.recency))
+    const recencyRank = rankRecency(350 - parseDate(visitor.recency))
     const frequencyRank = rankFrequency(visitor.frequency)
     await prisma.visitorsStats.create({
       data: {
@@ -77,6 +78,24 @@ export async function fillVisitorsStatsTable(): Promise<void> {
         recencyRank,
         frequencyRank,
         monetaryRank: visitor.monetaryRank ? visitor.monetaryRank : 0
+      }
+    })
+  }
+}
+
+export async function fillVisitorRanksTable(): Promise<void> {
+  const visitors = await prisma.visitorsStats.findMany()
+  for (const visitor of visitors) {
+    const visitorRank = rankVisitor(visitor)
+    await prisma.visitorRanks.create({
+      data: {
+        id: visitorRank.id,
+        recencyRank: visitorRank.recencyRank ? visitorRank.recencyRank : 0,
+        frequencyRank: visitorRank.frequencyRank
+          ? visitorRank.frequencyRank
+          : 0,
+        monetaryRank: visitorRank.monetaryRank ? visitorRank.monetaryRank : 0,
+        rank: visitorRank.rank ? visitorRank.rank : 'Unknown'
       }
     })
   }

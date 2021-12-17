@@ -73,3 +73,60 @@ export function calculateMonetaryPercent(visitors: Visitor[]): Visitor[] {
 
   return visitors
 }
+
+export function rankVisitor(visitor: Visitor): Visitor {
+  if (visitor.recencyRank && visitor.monetaryRank && visitor.frequencyRank) {
+    if (
+      visitor.recencyRank <= 2 &&
+      visitor.frequencyRank >= 4 &&
+      visitor.monetaryRank >= 4
+    ) {
+      return { ...visitor, rank: 'Ушедшие выгодные' }
+    }
+    if (
+      visitor.recencyRank >= 4 &&
+      visitor.frequencyRank >= 3 &&
+      visitor.monetaryRank >= 1
+    ) {
+      return { ...visitor, rank: 'Супер лояльные' }
+    }
+    if (
+      visitor.recencyRank <= 3 &&
+      visitor.frequencyRank >= 2 &&
+      visitor.monetaryRank >= 1
+    ) {
+      return { ...visitor, rank: 'Спящие лояльные' }
+    }
+    if (
+      visitor.recencyRank >= 4 &&
+      visitor.frequencyRank === 1 &&
+      visitor.monetaryRank === 1
+    ) {
+      return { ...visitor, rank: 'Новички' }
+    }
+    if (
+      visitor.recencyRank >= 4 &&
+      visitor.frequencyRank <= 2 &&
+      visitor.monetaryRank >= 1
+    ) {
+      return { ...visitor, rank: 'Переспективные новички' }
+    }
+    if (
+      visitor.recencyRank === 1 &&
+      visitor.frequencyRank <= 2 &&
+      visitor.monetaryRank >= 2
+    ) {
+      return { ...visitor, rank: 'Особый повод' }
+    }
+    if (
+      visitor.recencyRank <= 3 &&
+      visitor.frequencyRank === 1 &&
+      visitor.monetaryRank <= 2
+    ) {
+      return { ...visitor, rank: 'Ушедшие обычные' }
+    }
+    return { ...visitor, rank: 'Unknown' }
+  } else {
+    return { ...visitor, rank: 'Unknown' }
+  }
+}
