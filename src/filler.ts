@@ -5,7 +5,7 @@ import {
   generateMonetary,
   generateRecency
 } from './generators'
-import { rankFrequency, rankRecency } from './parser'
+import { rankFrequency, rankRecency, calculateMonetaryPercent } from './parser'
 import moment from 'moment'
 
 export async function fillVisitorsTable(): Promise<void> {
@@ -26,11 +26,17 @@ export async function fillVisitorsTable(): Promise<void> {
 
 export async function fillVisitorsStatsTable(): Promise<void> {
   const visitors = await prisma.visitors.findMany()
-  visitors.forEach(async (visitor) => {
+  const visitorsMonetary = calculateMonetaryPercent(visitors)
+  for (const visitor of visitorsMonetary) {
     const recencyRank = rankRecency(moment(visitor.recency).dayOfYear())
     const frequencyRank = rankFrequency(visitor.frequency)
     await prisma.visitorsStats.create({
-      data: { ...visitor, recencyRank, frequencyRank, monetaryRank: 0 }
+      data: {
+        ...visitor,
+        recencyRank,
+        frequencyRank,
+        monetaryRank: visitor.monetaryRank ? visitor.monetaryRank : 0
+      }
     })
-  })
+  }
 }

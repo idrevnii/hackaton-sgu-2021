@@ -1,3 +1,5 @@
+import { Visitor } from './models'
+
 export function rankRecency(recency: number): number {
   if (recency >= 0 && recency <= 13) {
     return 5
@@ -30,58 +32,39 @@ export function rankFrequency(frequency: number): number {
   }
 }
 
-// function compare(a: Visitor, b: Visitor) {
-//   if (a.monetary < b.monetary) {
-//     return 1
-//   }
-//   if (a.monetary > b.monetary) {
-//     return -1
-//   }
-//   return 0
-// }
+export function calculateMonetaryPercent(visitors: Visitor[]): Visitor[] {
+  visitors.sort((a, b) => b.monetary - a.monetary)
 
-// export function reduceMonetaryPercent(arr: Visitor[]): Visitor[] {
-//   arr.sort(compare)
-//   const sum = arr.reduce((acc, el) => acc + el.monetary, 0)
-//   console.log(sum)
-//   return arr.map((el) => {
-//     const percent = Math.floor((el.monetary * 100) / sum) * 100000000
-//     const monetaryPercent =
-//       percent <= 5
-//         ? 5
-//         : percent <= 10
-//         ? 10
-//         : percent <= 15
-//         ? 15
-//         : percent <= 20
-//         ? 20
-//         : 50
-//     console.log(
-//       `monetary: ${el.monetary},  monetaryCalc: ${
-//         ((el.monetary * 100) / sum) * 100
-//       } rawPrecent: ${percent}, percent: ${monetaryPercent}, rank: ${monetaryRank(
-//         monetaryPercent
-//       )}`
-//     )
-//     return { ...el, monetaryRank: monetaryRank(monetaryPercent) }
-//   })
-// }
+  const sum = visitors.reduce((acc, el) => acc + el.monetary, 0)
 
-// function monetaryRank(monetaryPercent: number): number {
-//   if (monetaryPercent === 50) {
-//     return 5
-//   }
-//   if (monetaryPercent === 20) {
-//     return 4
-//   }
-//   if (monetaryPercent === 15) {
-//     return 3
-//   }
-//   if (monetaryPercent === 10) {
-//     return 2
-//   }
-//   if (monetaryPercent === 5) {
-//     return 1
-//   }
-//   return 0
-// }
+  let index = 0
+  const mapCapSum = [
+    sum / 2,
+    sum / 5,
+    (sum - (sum / 2 + sum / 5)) / 2,
+    sum / 10,
+    sum / 20
+  ]
+  const mapRank = [5, 4, 3, 2, 1]
+
+  let bufferSum = 0
+  let capSum = mapCapSum[index]
+  let rank = mapRank[index]
+
+  const stepDown = () => {
+    bufferSum = 0
+    index += 1
+    capSum = mapCapSum[index]
+    rank = mapRank[index]
+  }
+
+  for (const visitor of visitors) {
+    visitor.monetaryRank = rank
+    bufferSum += visitor.monetary
+    if (bufferSum >= capSum) {
+      stepDown()
+    }
+  }
+
+  return visitors
+}
